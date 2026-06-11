@@ -34,6 +34,13 @@ import { isValidApiKeyCharset } from '@/utils/validation';
 
 /** Minimum character count before the expand/collapse toggle appears. */
 const EXPAND_THRESHOLD = 30;
+const PAYLOAD_PROTOCOL_DEFAULT_SELECT_VALUE = '__payload_protocol_default__';
+
+const toPayloadProtocolSelectValue = (value?: string) =>
+  value?.trim() ? value : PAYLOAD_PROTOCOL_DEFAULT_SELECT_VALUE;
+
+const fromPayloadProtocolSelectValue = (value: string) =>
+  value === PAYLOAD_PROTOCOL_DEFAULT_SELECT_VALUE ? undefined : value;
 
 /** Auto-expanding textarea that collapses back to a single-line input on demand. */
 function ExpandableInput({
@@ -149,7 +156,8 @@ function buildProtocolOptions(
 ) {
   const options: Array<{ value: string; label: string }> = VISUAL_CONFIG_PROTOCOL_OPTIONS.map(
     (option) => ({
-      value: option.value,
+      value:
+        option.value === '' ? PAYLOAD_PROTOCOL_DEFAULT_SELECT_VALUE : option.value,
       label: t(option.labelKey, { defaultValue: option.defaultLabel }),
     })
   );
@@ -493,7 +501,7 @@ export const PayloadRulesEditor = memo(function PayloadRulesEditor({
   const fromProtocolOptions = useMemo(
     () => [
       {
-        value: '',
+        value: PAYLOAD_PROTOCOL_DEFAULT_SELECT_VALUE,
         label: t('config_management.visual.payload_rules.provider_default'),
       },
       {
@@ -838,13 +846,13 @@ export const PayloadRulesEditor = memo(function PayloadRulesEditor({
                     {protocolFirst ? (
                       <>
                         <Select
-                          value={model.protocol ?? ''}
+                          value={toPayloadProtocolSelectValue(model.protocol)}
                           options={protocolOptions}
                           disabled={disabled}
                           ariaLabel={t('config_management.visual.payload_rules.provider_type')}
                           onChange={(nextValue) =>
                             updateModel(ruleIndex, modelIndex, {
-                              protocol: (nextValue || undefined) as PayloadModelEntry['protocol'],
+                              protocol: fromPayloadProtocolSelectValue(nextValue),
                             })
                           }
                         />
@@ -870,13 +878,13 @@ export const PayloadRulesEditor = memo(function PayloadRulesEditor({
                           disabled={disabled}
                         />
                         <Select
-                          value={model.protocol ?? ''}
+                          value={toPayloadProtocolSelectValue(model.protocol)}
                           options={protocolOptions}
                           disabled={disabled}
                           ariaLabel={t('config_management.visual.payload_rules.provider_type')}
                           onChange={(nextValue) =>
                             updateModel(ruleIndex, modelIndex, {
-                              protocol: (nextValue || undefined) as PayloadModelEntry['protocol'],
+                              protocol: fromPayloadProtocolSelectValue(nextValue),
                             })
                           }
                         />
@@ -912,14 +920,13 @@ export const PayloadRulesEditor = memo(function PayloadRulesEditor({
                             {t('config_management.visual.payload_rules.from_protocol')}
                           </label>
                           <Select
-                            value={model.fromProtocol ?? ''}
+                            value={toPayloadProtocolSelectValue(model.fromProtocol)}
                             options={fromProtocolOptions}
                             disabled={disabled}
                             ariaLabel={t('config_management.visual.payload_rules.from_protocol')}
                             onChange={(nextValue) =>
                               updateModel(ruleIndex, modelIndex, {
-                                fromProtocol: (nextValue ||
-                                  undefined) as PayloadModelEntry['fromProtocol'],
+                                fromProtocol: fromPayloadProtocolSelectValue(nextValue),
                               })
                             }
                           />
@@ -1287,13 +1294,13 @@ export const PayloadFilterRulesEditor = memo(function PayloadFilterRulesEditor({
                   disabled={disabled}
                 />
                 <Select
-                  value={model.protocol ?? ''}
+                  value={toPayloadProtocolSelectValue(model.protocol)}
                   options={protocolOptions}
                   disabled={disabled}
                   ariaLabel={t('config_management.visual.payload_rules.provider_type')}
                   onChange={(nextValue) =>
                     updateModel(ruleIndex, modelIndex, {
-                      protocol: (nextValue || undefined) as PayloadModelEntry['protocol'],
+                      protocol: fromPayloadProtocolSelectValue(nextValue),
                     })
                   }
                 />
